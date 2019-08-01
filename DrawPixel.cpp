@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <string>
 #include <cmath>
+#include <math.h>
 #include "Matriz.h"
+#include "Vector2.h"
 
 //Screen dimension constants
 int SCREEN_WIDTH = 720;
@@ -169,8 +171,13 @@ void DrawPoint(float x, float y)
 int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
-	Matriz m(5, 5);
-	m.PrintMatriz();
+
+	Matriz m(2, 3, 2);
+	Matriz m2(2, 3);
+
+	m = m2;
+	m.Print();
+
 	
 	//Start up SDL and create window
 	if (!init())
@@ -203,10 +210,11 @@ int main(int argc, char* args[])
 
 			//Aqui puse todo lo del Draw para mejor orden
 			DrawPlain();
-			DrawPoint(0, 0);
+
+			/*DrawPoint(0, 0);
 			DrawPoint(-1.949f, 2.2807f);
 			DrawPoint(.3318f, 4.2296f);
-			DrawPoint(2.2807f, 1.9489f);
+			DrawPoint(2.2807f, 1.9489f);*/
 			
 			SDL_RenderPresent(gRenderer);
 		}
