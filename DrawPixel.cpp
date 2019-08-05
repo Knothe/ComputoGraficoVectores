@@ -172,12 +172,14 @@ int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
 
-	Matriz m(2, 3, 2);
-	Matriz m2(2, 3);
+	Vector2 v1;
+	Vector2 v2;
+	v1 = v1 + v2;
 
-	m = m2;
-	m.Print();
-
+	Matriz m1(3, 3, 1);
+	Matriz m2(3, 3, 2);
+	m1 = m1 + m2;
+	m1.Print();
 	
 	//Start up SDL and create window
 	if (!init())

@@ -5,19 +5,19 @@
 class Matriz
 {
 public:
+	Matriz(const Matriz& other);
 	Matriz(unsigned rows, unsigned cols);
 	Matriz(unsigned, unsigned, int);
 
-	Matriz& operator=(Matriz&);
+	Matriz& operator=(Matriz);
 	Matriz operator+(Matriz&);
-	/*
 	Matriz operator-(Matriz&);
 	Matriz operator* (Matriz&);
 	void Transpose();
 
 	Matriz operator+(float);
 	Matriz operator-(float);
-	Matriz operator* (float);*/
+	Matriz operator* (float);
 
 	float& operator()(unsigned, unsigned);
 	unsigned GetRows();

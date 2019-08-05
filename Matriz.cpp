@@ -158,6 +158,13 @@
 //}
 
 
+Matriz::Matriz(const Matriz& other)
+{
+	mat = other.mat;
+	rows = other.rows;
+	cols = other.cols;
+}
+
 Matriz::Matriz(unsigned rows, unsigned cols)
 {
 	std::vector<float>m;
@@ -184,11 +191,14 @@ Matriz::Matriz(unsigned rows, unsigned cols, int n)
 	this->cols = cols;
 }
 
-Matriz& Matriz::operator=(Matriz& other)
+Matriz& Matriz::operator=(Matriz other)
 {
-	rows = other.GetRows();
-	cols = other.GetCols();
-	Matriz temp(rows, cols);
+	if (&other == this)
+		return *this;
+
+	unsigned new_rows = other.GetRows();
+	unsigned new_cols = other.GetCols();
+
 	mat.resize(rows);
 	for (int i = 0; i < mat.size(); i++)
 	{
@@ -196,10 +206,9 @@ Matriz& Matriz::operator=(Matriz& other)
 		for (int j = 0; j < mat[i].size(); j++)
 		{
 			mat[i][j] = other(i, j);
-			temp(i, j) = mat[i][j];
 		}
 	}
-	return temp;
+	return *this;
 }
 
 Matriz Matriz::operator+(Matriz& other)
@@ -216,6 +225,96 @@ Matriz Matriz::operator+(Matriz& other)
 
 	return m;
 }
+
+Matriz Matriz::operator-(Matriz& other)
+{
+	Matriz m(rows, cols, 0);
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			m(i, j) = mat[i][j] - other(i, j);
+		}
+	}
+
+	return m;
+}
+
+Matriz Matriz::operator* (Matriz& other) 
+{
+	Matriz m(rows, cols, 0);
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			m(i, j) = mat[i][0] * other(0, j);
+			m(i, j) += mat[i][1] * other(1, j);
+			m(i, j) += mat[i][2] * other(2, j);
+		}
+	}
+
+	return m;
+}
+
+void Matriz::Transpose()
+{
+	std::vector<std::vector<float>>m;
+
+	m = mat;
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			mat[i][j] = m[j][i];
+		}
+	}
+	
+}
+
+Matriz Matriz::operator+(float num)
+{
+	Matriz m(rows, cols, 0);
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			m(i, j) = mat[i][j] + num;
+		}
+	}
+	return m;
+}
+
+Matriz Matriz::operator-(float num)
+{
+	Matriz m(rows, cols, 0);
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			m(i, j) = mat[i][j] - num;
+		}
+	}
+	return m;
+}
+
+Matriz Matriz::operator*(float num)
+{
+	Matriz m(rows, cols, 0);
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			m(i, j) = mat[i][j] * num;
+		}
+	}
+	return m;
+}
+
 
 float& Matriz::operator()(unsigned y, unsigned x)
 {
