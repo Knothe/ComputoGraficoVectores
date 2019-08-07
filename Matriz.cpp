@@ -157,6 +157,15 @@
 //	}
 //}
 
+Matriz::Matriz() {
+	cols = 3;
+	rows = 3;
+	mat.resize(rows);
+	for (int i = 0; i < mat.size(); i++)
+	{
+		mat[i].resize(cols, 0);
+	}
+}
 
 Matriz::Matriz(const Matriz& other)
 {
@@ -167,7 +176,6 @@ Matriz::Matriz(const Matriz& other)
 
 Matriz::Matriz(unsigned rows, unsigned cols)
 {
-	std::vector<float>m;
 	mat.resize(rows);
 	for (int i = 0; i < mat.size(); i++)
 	{
@@ -180,7 +188,6 @@ Matriz::Matriz(unsigned rows, unsigned cols)
 
 Matriz::Matriz(unsigned rows, unsigned cols, int n)
 {
-	std::vector<float>m;
 	mat.resize(rows);
 	for (int i = 0; i < mat.size(); i++)
 	{

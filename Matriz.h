@@ -5,6 +5,7 @@
 class Matriz
 {
 public:
+	Matriz();
 	Matriz(const Matriz& other);
 	Matriz(unsigned rows, unsigned cols);
 	Matriz(unsigned, unsigned, int);
@@ -26,10 +27,11 @@ public:
 
 	~Matriz();
 
-private:
+protected:
 	std::vector<std::vector<float>> mat;
 	unsigned rows;
 	unsigned cols;
+
 
 };
 

@@ -6,6 +6,9 @@
 #include <math.h>
 #include "Matriz.h"
 #include "Vector2.h"
+#include "Escalamiento.h"
+#include "Traslacion.h"
+#include "Rotacion.h"
 
 //Screen dimension constants
 int SCREEN_WIDTH = 720;
@@ -141,7 +144,7 @@ void DrawPlain()
 	for (int i = SCREEN_WIDTH / 2; i < SCREEN_WIDTH;)
 	{
 		i += tam;
-		SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH - i, SCREEN_HEIGHT/2);
+			SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH - i, SCREEN_HEIGHT/2);
 		SDL_RenderDrawPoint(gRenderer, i, SCREEN_HEIGHT / 2);
 	}
 
@@ -172,15 +175,16 @@ int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
 
-	Vector2 v1;
-	Vector2 v2;
-	v1 = v1 + v2;
+	Escalamiento e(2, 3);
+	Traslacion t(3, 3);
+	Rotacion r(M_PI);
 
-	Matriz m1(3, 3, 1);
-	Matriz m2(3, 3, 2);
-	m1 = m1 + m2;
-	m1.Print();
-	
+	e.Print();
+	std::cout << std::endl;
+	t.Print();
+	std::cout << std::endl;
+	r.Print();
+	std::cout << std::endl;
 	//Start up SDL and create window
 	if (!init())
 	{

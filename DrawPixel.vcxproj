@@ -155,11 +155,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DrawPixel.cpp" />
+    <ClCompile Include="Escalamiento.cpp" />
     <ClCompile Include="Matriz.cpp" />
+    <ClCompile Include="Rotacion.cpp" />
+    <ClCompile Include="Traslacion.cpp" />
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Escalamiento.h" />
     <ClInclude Include="Matriz.h" />
+    <ClInclude Include="Rotacion.h" />
+    <ClInclude Include="Traslacion.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
