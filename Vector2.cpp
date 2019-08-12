@@ -8,18 +8,18 @@ Vector2::Vector2()
 	z = 1;
 }
 
-Vector2::Vector2(int x, int y) : x(x), y(y)
+Vector2::Vector2(float x, float y) : x(x), y(y)
 {
 	z = 1;
 }
 
-void Vector2::Suma(int x, int y)
+void Vector2::Suma(float x, float y)
 {
 	this->x += x;
 	this->x += y;
 }
 
-void Vector2::Resta(int x, int y)
+void Vector2::Resta(float x, float y)
 {
 	this->x -= x;
 	this->x -= y;
@@ -48,14 +48,14 @@ float Vector2::operator *(Vector2 other)//Producto escalar
 	temp += this->y * other.GetY();
 	return temp;
 }
-//
-//Vector2 Vector2::operator * (Matriz other)
-//{
-//	Vector2 temp;
-//	temp.SetX((x * other.GetValue(0,0)) + (y * other.GetValue(1,0)) + other.GetValue(2,0));
-//	temp.SetY((x * other.GetValue(0, 1)) + (y * other.GetValue(1, 1)) + other.GetValue(2, 1));
-//	return temp;
-//}
+
+Vector2 Vector2::operator * (Matriz other)
+{
+	Vector2 temp;
+	temp.SetX((x * other(0,0)) + (y * other(1,0)) + other(2,0));
+	temp.SetY((x * other(0, 1)) + (y * other(1, 1)) + other(2, 1));
+	return temp;
+}
 
 Vector2 Vector2::operator * (float num)//Producto por escalar
 {
@@ -74,18 +74,18 @@ void Vector2::operator=(Vector2 other)
 void Vector2::Draw(SDL_Renderer* gRenderer, int width, int height, int tam)
 {
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
-	int provx, provy;
+	float provx, provy;
 	provx = (width / 2) + (tam * x);
 	provy = (height / 2) - (tam * y);
 	SDL_RenderDrawPoint(gRenderer, provx, provy);
 }
 
-void Vector2::SetX(int x) 
+void Vector2::SetX(float x)
 {
 	this->x = x;
 }
 
-void Vector2::SetY(int y)
+void Vector2::SetY(float y)
 {
 	this->y = y;
 }

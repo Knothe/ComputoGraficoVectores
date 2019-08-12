@@ -6,3 +6,4 @@ public:
 	Traslacion(float x, float y);
 };
 
+ 

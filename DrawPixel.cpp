@@ -9,6 +9,7 @@
 #include "Escalamiento.h"
 #include "Traslacion.h"
 #include "Rotacion.h"
+#include <queue>
 
 //Screen dimension constants
 int SCREEN_WIDTH = 720;
@@ -171,20 +172,119 @@ void DrawPoint(float x, float y)
 	SDL_RenderDrawPoint(gRenderer, x, y);
 }
 
+void PrintMenu()
+{
+	std::cout << "Seleccione una Matriz :" << std::endl;
+	std::cout << "1) Traslacion" << std::endl;
+	std::cout << "2) Escalamiento" << std::endl;
+	std::cout << "3) Rotacion" << std::endl;
+	std::cout << "4) Finalizar" << std::endl;
+}
+
+Matriz AskMatriz(std::queue<Matriz>* q)
+{
+	float x, y;
+	unsigned n, numMatriz;
+	Matriz m;
+	Matriz t;
+
+	numMatriz = n = 0;
+
+	while (n != 4)
+	{
+		PrintMenu();
+		std::cin >> n;
+		switch (n)
+		{
+		case 1:
+			std::cout << "Ingrese la traslación en x : ";
+			std::cin >> x;
+			std::cout << "Ingrese la traslación en y : ";
+			std::cin >> y;
+			t = Traslacion(x, y);
+			break;
+		case 2:
+			std::cout << "Ingrese el escalamiento en x : ";
+			std::cin >> x;
+			std::cout << "Ingrese el escalamiento en y : ";
+			std::cin >> y;
+			t = Escalamiento(x, y);
+			break;
+		case 3:
+			std::cout << "Ingrese la rotacion : ";
+			std::cin >> x;
+			t = Rotacion(x);
+			break;
+		case 4:
+			std::cout << "Se ingresaron todas las modificaciones" << std::endl;
+			break;
+		}
+		if (n < 4)
+		{
+			q->push(t);
+			numMatriz++;
+		}
+	}
+
+	for (int i = 0; i < numMatriz; i++)
+	{
+		m = m * q->front();
+		q->pop();
+	}
+	m.Print();
+	return m;
+}
+
+void SetVectores(Vector2* v, int size, Matriz m)
+{
+	for (int i = 0; i < size; i++)
+	{
+		v[i] = v[i] * m;
+	}
+}
+
+void IngresoVectores(Vector2* v, int tamVector)
+{
+	float x, y;
+	
+	for (int i = 0; i < tamVector; i++)
+	{
+		std::cout << "Ingrese el valor de x : ";
+		std::cin >> x;
+		std::cout << "Ingrese el valor de y : ";
+		std::cin >> y;
+		v[i].SetX(x);
+		v[i].SetY(y);
+	}
+}
+
 int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
 
-	Escalamiento e(2, 3);
-	Traslacion t(3, 3);
-	Rotacion r(M_PI);
+	std::queue<Matriz> q;
+	
+	Vector2* v;
+	unsigned int tamVector;
 
-	e.Print();
-	std::cout << std::endl;
-	t.Print();
-	std::cout << std::endl;
-	r.Print();
-	std::cout << std::endl;
+	std::cout << "Ingrese la cantidad de Vector2 que desea: ";
+	std::cin >> tamVector;
+	v = new Vector2[tamVector];
+
+	IngresoVectores(v, tamVector);
+
+	for (int i = 0; i < tamVector; i++)
+	{
+		v[i].Print();
+	}
+
+	SetVectores(v, tamVector, AskMatriz(&q));
+
+	for (int i = 0; i < tamVector; i++)
+	{
+		v[i].Print();
+	}
+
 	//Start up SDL and create window
 	if (!init())
 	{
@@ -217,10 +317,10 @@ int main(int argc, char* args[])
 			//Aqui puse todo lo del Draw para mejor orden
 			DrawPlain();
 
-			/*DrawPoint(0, 0);
-			DrawPoint(-1.949f, 2.2807f);
-			DrawPoint(.3318f, 4.2296f);
-			DrawPoint(2.2807f, 1.9489f);*/
+			v[0].Draw(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT,tam);
+			v[1].Draw(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, tam);
+			v[2].Draw(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, tam);
+			
 			
 			SDL_RenderPresent(gRenderer);
 		}

@@ -164,7 +164,9 @@ Matriz::Matriz() {
 	for (int i = 0; i < mat.size(); i++)
 	{
 		mat[i].resize(cols, 0);
+		mat[i][i] = 1;
 	}
+
 }
 
 Matriz::Matriz(const Matriz& other)
@@ -321,6 +323,7 @@ Matriz Matriz::operator*(float num)
 	}
 	return m;
 }
+
 
 
 float& Matriz::operator()(unsigned y, unsigned x)
