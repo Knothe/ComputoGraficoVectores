@@ -9,13 +9,19 @@ private:
 	float y;
 	float z;
 	float size = 0;
+
+	int screenHeight;
+	int screenWidth;
+	int tam;
 public:
 	Vector2();
 	Vector2(float x, float y);
+	Vector2(float, float, int, int, int);
 
 	void Suma(float x, float y);
 	void Resta(float x, float y);
-	void Draw(SDL_Renderer* gRenderer, int height, int width, int tam);
+	void Draw(SDL_Renderer* gRenderer, int height, int width, int tam,int num);
+	void Draw(SDL_Renderer* gRenderer);
 	Vector2 operator * (Matriz other);
 	Vector2 operator +(Vector2);//Suma
 	Vector2 operator -(Vector2);//Resta

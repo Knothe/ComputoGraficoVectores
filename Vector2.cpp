@@ -6,11 +6,27 @@ Vector2::Vector2()
 	x = 0;
 	y = 0;
 	z = 1;
+	screenWidth = 480;
+	screenHeight = 720;
+	tam = 30;
 }
 
 Vector2::Vector2(float x, float y) : x(x), y(y)
 {
+	screenWidth = 480;
+	screenHeight = 720;
+	tam = 30;
 	z = 1;
+}
+
+Vector2::Vector2(float x , float y, int sH, int sW, int t)
+{
+	screenHeight = sH;
+	screenWidth = sW;
+	tam = t;
+	z = 0;
+	this->x = (x - (sW / 2))/tam;
+	this->y = ((sH / 2) - y)/tam;
 }
 
 void Vector2::Suma(float x, float y)
@@ -71,12 +87,37 @@ void Vector2::operator=(Vector2 other)
 	y = other.GetY();
 }
 
-void Vector2::Draw(SDL_Renderer* gRenderer, int width, int height, int tam)
+void Vector2::Draw(SDL_Renderer* gRenderer, int width, int height, int tam, int num)
 {
-	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
+	if (num == 0)
+	{
+		SDL_SetRenderDrawColor(gRenderer, 0xf0, 0x0e, 0x0e, 0xFF);
+	}
+	else
+	{
+		SDL_SetRenderDrawColor(gRenderer, 0x64, 0xff, 0x00, 0xFF);
+	}
+	
 	float provx, provy;
 	provx = (width / 2) + (tam * x);
 	provy = (height / 2) - (tam * y);
+	SDL_RenderDrawPoint(gRenderer, provx, provy);
+}
+
+void Vector2::Draw(SDL_Renderer* gRenderer)
+{
+	
+		SDL_SetRenderDrawColor(gRenderer, 0xf0, 0x0e, 0x0e, 0xFF);
+	/*
+	else
+	{
+		SDL_SetRenderDrawColor(gRenderer, 0x64, 0xff, 0x00, 0xFF);
+	}*/
+
+	float provx, provy;
+
+	provx = (screenWidth / 2) + (tam * x);
+	provy = (screenHeight / 2) - (tam * y);
 	SDL_RenderDrawPoint(gRenderer, provx, provy);
 }
 

@@ -10,6 +10,7 @@
 #include "Traslacion.h"
 #include "Rotacion.h"
 #include <queue>
+#include <vector>
 
 //Screen dimension constants
 int SCREEN_WIDTH = 720;
@@ -235,26 +236,16 @@ Matriz AskMatriz(std::queue<Matriz>* q)
 	return m;
 }
 
-void SetVectores(Vector2* v, int size, Matriz m)
+void SetVectores(std::vector<Vector2>* v, Matriz m)
 {
-	for (int i = 0; i < size; i++)
+	for (auto i = v->begin(); i != v->end(); i++)
 	{
-		v[i] = v[i] * m;
+		*i = *i * m;
 	}
-}
 
-void IngresoVectores(Vector2* v, int tamVector)
-{
-	float x, y;
-	
-	for (int i = 0; i < tamVector; i++)
+	for (auto object : *v)
 	{
-		std::cout << "Ingrese el valor de x : ";
-		std::cin >> x;
-		std::cout << "Ingrese el valor de y : ";
-		std::cin >> y;
-		v[i].SetX(x);
-		v[i].SetY(y);
+		object.Print();
 	}
 }
 
@@ -264,27 +255,10 @@ int main(int argc, char* args[])
 
 	std::queue<Matriz> q;
 	
-	Vector2* v;
-	unsigned int tamVector;
+	std::vector<Vector2> v;
+	//v.resize(0);
 
-	std::cout << "Ingrese la cantidad de Vector2 que desea: ";
-	std::cin >> tamVector;
-	v = new Vector2[tamVector];
-
-	IngresoVectores(v, tamVector);
-
-	for (int i = 0; i < tamVector; i++)
-	{
-		v[i].Print();
-	}
-
-	SetVectores(v, tamVector, AskMatriz(&q));
-
-	for (int i = 0; i < tamVector; i++)
-	{
-		v[i].Print();
-	}
-
+	std::cout << "Presione enter para ingresar su matriz de transformacion " << std::endl;
 	//Start up SDL and create window
 	if (!init())
 	{
@@ -309,6 +283,21 @@ int main(int argc, char* args[])
 				{
 					quit = true;
 				}
+				else if (e.type == SDL_MOUSEBUTTONDOWN)
+				{
+					std::cout << "Recibimos : " << e.button.x << ", " << e.button.y << std::endl;
+					std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
+					v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
+				}
+				else if (e.type == SDL_KEYDOWN)
+				{
+					if (e.key.keysym.sym == 13 && v.size() != 0)
+					{
+						SetVectores(&v, AskMatriz(&q));
+						std::cout << q.size();
+					}
+					
+				}
 			}
 
 			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
@@ -317,10 +306,10 @@ int main(int argc, char* args[])
 			//Aqui puse todo lo del Draw para mejor orden
 			DrawPlain();
 
-			v[0].Draw(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT,tam);
-			v[1].Draw(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, tam);
-			v[2].Draw(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, tam);
-			
+			for (auto object : v)
+			{
+				object.Draw(gRenderer);
+			}
 			
 			SDL_RenderPresent(gRenderer);
 		}
