@@ -10,6 +10,7 @@
 #include "Traslacion.h"
 #include "Rotacion.h"
 #include <queue>
+#include <stack>
 #include <vector>
 
 //Screen dimension constants
@@ -182,8 +183,9 @@ void PrintMenu()
 	std::cout << "4) Finalizar" << std::endl;
 }
 
-Matriz AskMatriz(std::queue<Matriz>* q)
+Matriz AskMatriz()
 {
+	std::queue<Matriz> q;
 	float x, y;
 	unsigned n, numMatriz;
 	Matriz m;
@@ -222,15 +224,15 @@ Matriz AskMatriz(std::queue<Matriz>* q)
 		}
 		if (n < 4)
 		{
-			q->push(t);
+			q.push(t);
 			numMatriz++;
 		}
 	}
 
 	for (int i = 0; i < numMatriz; i++)
 	{
-		m = m * q->front();
-		q->pop();
+		m = m * q.front();
+		q.pop();
 	}
 	m.Print();
 	return m;
@@ -253,8 +255,9 @@ int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
 
-	std::queue<Matriz> q;
 	
+	std::stack<Matriz> i;
+	Matriz change;
 	std::vector<Vector2> v;
 	//v.resize(0);
 
@@ -291,10 +294,18 @@ int main(int argc, char* args[])
 				}
 				else if (e.type == SDL_KEYDOWN)
 				{
+					std::cout << e.key.keysym.sym << std::endl;
 					if (e.key.keysym.sym == 13 && v.size() != 0)
 					{
-						SetVectores(&v, AskMatriz(&q));
-						std::cout << q.size();
+						change = AskMatriz();
+						SetVectores(&v, change);
+						i.push(change.Inversa());
+					}
+
+					if (e.key.keysym.sym == 122 && i.size() > 0)
+					{
+						SetVectores(&v, i.top());
+						i.pop();
 					}
 					
 				}

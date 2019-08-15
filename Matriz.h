@@ -11,11 +11,14 @@ public:
 	Matriz(unsigned, unsigned, int);
 
 	Matriz& operator=(Matriz);
+	bool operator==(Matriz);
+	Matriz& operator=(std::vector<std::vector<float>>);
 	Matriz operator+(Matriz&);
 	Matriz operator-(Matriz&);
 	Matriz operator* (Matriz&);
 	void Transpose();
-
+	Matriz Inversa();
+	
 	Matriz operator+(float);
 	Matriz operator-(float);
 	Matriz operator* (float);

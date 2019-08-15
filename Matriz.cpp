@@ -1,161 +1,6 @@
 #include "Matriz.h"
 #include <math.h>
 #include <iostream>
-//
-//Matriz::Matriz(char t, float x, float y)
-//{
-//	m = new float* [3];
-//	for (int i = 0; i < 3; i++)
-//	{
-//		m[i] = new float[3];
-//	}
-//	
-//	switch (t)
-//	{
-//	case 'r':
-//		std::cout << cos(x) << "   " << sin(x) << std::endl;
-//		m[0][0] = cos(x);
-//		m[0][1] = sin(x);
-//		m[0][2] = 0;
-//		m[1][0] = -sin(x);
-//		m[1][1] = cos(x);
-//		m[1][2] = 0;
-//		m[2][0] = 0;
-//		m[2][1] = 0;
-//		m[2][2] = 1;
-//		break;
-//	case 't':
-//		m[0][0] = 1;
-//		m[0][1] = 0;
-//		m[0][2] = 0;
-//		m[1][0] = 0;
-//		m[1][1] = 1;
-//		m[1][2] = 0;
-//		m[2][0] = x;
-//		m[2][1] = y;
-//		m[2][2] = 1;
-//		break;
-//	case 'e':
-//		m[0][0] = x;
-//		m[0][1] = 0;
-//		m[0][2] = 0;
-//		m[1][0] = 0;
-//		m[1][1] = y;
-//		m[1][2] = 0;
-//		m[2][0] = 0;
-//		m[2][1] = 0;
-//		m[2][2] = 1;
-//		break;
-//	case 'n':
-//		m[0][0] = 0;
-//		m[0][1] = 0;
-//		m[0][2] = 0;
-//		m[1][0] = 0;
-//		m[1][1] = 0;
-//		m[1][2] = 0;
-//		m[2][0] = 0;
-//		m[2][1] = 0;
-//		m[2][2] = 0;
-//		break;
-//	}
-//	
-//}
-//
-//Matriz::Matriz()
-//{
-//	m = new float* [3];
-//	for (int i = 0; i < 3; i++)
-//	{
-//		m[i] = new float[3];
-//	}
-//
-//	for (int i = 0; i < 3; i++)
-//	{
-//		for (int j = 0; j < 3; j++)
-//		{
-//			m[j][i] = 0;
-//		}
-//	}
-//}
-//
-//void Matriz::PrintMatriz()
-//{
-//	for (int i = 0; i < 3; i++)
-//	{
-//		for (int j = 0; j < 3; j++)
-//		{
-//			std::cout<<m[i][j]<< " ";
-//		}
-//		std::cout << std::endl;
-//	}
-//}
-//
-//float Matriz::GetValue(int x, int y)
-//{
-//	return m[x][y];
-//}
-//
-//void Matriz::SetValue(int x, int y, float value)
-//{
-//	m[x][y] = value;
-//}
-//
-//Matriz Matriz::operator+(Matriz other)
-//{
-//	Matriz temp('n', 0, 0);
-//
-//	for (int i = 0; i < 3; i++)
-//	{
-//		for (int j = 0; j < 3; j++)
-//		{
-//			temp.SetValue(j, i, m[j][i] + other.GetValue(j, i));
-//		}
-//	}
-//
-//	return temp;
-//}
-//
-//Matriz Matriz::operator-(Matriz other)
-//{
-//	Matriz temp('n', 0, 0);
-//	for (int i = 0; i < 3; i++)
-//	{
-//		for (int j = 0; j < 3; j++)
-//		{
-//			temp.SetValue(j, i, m[j][i] - other.GetValue(j, i));
-//		}
-//	}
-//	return temp;
-//}
-//
-//Matriz Matriz::operator*(Matriz other)
-//{
-//	Matriz temp;
-//	float value;
-//	for (int i = 0; i < 3; i++)
-//	{
-//		for (int j = 0; j < 3; j++)
-//		{
-//			value = m[j][0] * other.GetValue(0,i);
-//			value += m[j][1] * other.GetValue(1, i);
-//			value += m[j][2] * other.GetValue(2, i);
-//			temp.SetValue(j, i, value);
-//
-//		}
-//	}
-//	return temp;
-//}
-//
-//void Matriz::operator=(Matriz other)
-//{
-//	for (int i = 0; i < 3; i++)
-//	{
-//		for (int j = 0; j < 3; j++)
-//		{
-//			m[j][i] = other.GetValue(j, i);
-//		}
-//	}
-//}
 
 Matriz::Matriz() {
 	cols = 3;
@@ -175,6 +20,65 @@ Matriz::Matriz(const Matriz& other)
 	rows = other.rows;
 	cols = other.cols;
 }
+
+
+Matriz Matriz::Inversa()
+{
+	Matriz m, n, o;
+	float num = 0, mod = 0;
+	m = mat;
+
+	try
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			for (int i = 0; i < rows; i++)
+			{
+				if (m(i, j) != 0)
+				{
+					if (i == j)
+					{
+						mod = m(i, j);
+						for (int k = 0; k < cols; k++)
+						{
+							m(i, k) *= 1/mod;
+
+							n(i, k) *= 1 / mod;
+						}
+					}
+					else
+					{
+						mod = m(i, j) / m(j, j);
+						for (int k = 0; k < cols; k++)
+						{
+							m(i, k) = m(i, k) - (m(j, k) * mod);
+							n(i, k) = n(i, k) - (n(j, k) * mod);
+						}
+					}
+				}
+				
+			}
+		}
+		if (m == o)
+		{
+			std::cout << "Se completo" << std::endl; 
+		}
+		else
+		{
+			m.Print();
+			std::cout << std::endl;
+		}
+	}
+	catch (...)
+	{
+		std::cout << "Creo que dividimos entre 0 :v" << std::endl;
+	}
+
+	
+	return n;
+}
+
+std::vector<float> SumVector(std::vector<float>, std::vector<float>);
 
 Matriz::Matriz(unsigned rows, unsigned cols)
 {
@@ -215,6 +119,42 @@ Matriz& Matriz::operator=(Matriz other)
 		for (int j = 0; j < mat[i].size(); j++)
 		{
 			mat[i][j] = other(i, j);
+		}
+	}
+	return *this;
+}
+
+bool Matriz::operator==(Matriz other)
+{
+	if (&other == this)
+		return true;
+
+	if (cols != other.GetCols() && rows != other.GetRows())
+	{
+		return false;
+	}
+
+	for (int i = 0; i < mat.size(); i++)
+	{
+		for (int j = 0; j < mat[i].size(); j++)
+		{
+			if (mat[i][j] != other(i, j))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+Matriz& Matriz::operator=(std::vector<std::vector<float>> v)
+{
+	
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			mat[i][j] = v[i][j];
 		}
 	}
 	return *this;
