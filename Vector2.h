@@ -9,7 +9,8 @@ private:
 	float y;
 	float z;
 	float size = 0;
-
+	int screenX;
+	int screenY;
 	int screenHeight;
 	int screenWidth;
 	int tam;
@@ -34,6 +35,8 @@ public:
 	void SetY(float y);
 	float GetX();
 	float GetY();
+	int GetScreenX() const;
+	int GetScreenY() const;
 	void Print();
 
 	~Vector2();

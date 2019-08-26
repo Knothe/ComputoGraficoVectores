@@ -251,6 +251,146 @@ void SetVectores(std::vector<Vector2>* v, Matriz m)
 	}
 }
 
+void DrawLine(Vector2* const v1, Vector2* const v2)
+{
+	Vector2 v;
+	v = *v1;
+
+	float n = 0;
+	float m = (v2->GetY() - v1->GetY()) / (v2->GetX() - v1->GetX());
+	float c = v1->GetY() - (m * v1->GetX());
+	
+	if (abs(m) < 1)
+	{
+		n = v2->GetX() - v1->GetX();
+		n = n / 10;
+		while (v.GetX() < v2->GetX())
+		{
+			v.SetX(v.GetX() + n);
+			v.SetY((m * v.GetX()) + c);
+			v.Draw(gRenderer);
+		}
+
+	}
+	else if (abs(m) > 1)
+	{
+		n = v2->GetY() - v1->GetY();
+		n = n / 10;
+		
+		while (v.GetY() < v2->GetY())
+		{
+			v.SetY(v.GetY() + n);
+			v.SetX((v.GetY() - c) / m);
+			v.Draw(gRenderer);
+		}
+	}
+}
+
+void DrawLine2(Vector2* const v1, Vector2* const v2)
+{
+	float dx, dy;
+	int deno = 1;
+	Vector2 v_Incr;
+	Vector2 v;
+	int i;
+
+	dx = v2->GetX() - v1->GetX();
+	dy = v2->GetY() - v1->GetY();
+
+	if (abs(dy) < abs(dx))
+		deno = abs(dx);
+	else if (abs(dy) > abs(dx))
+		deno = abs(dy);
+
+	v_Incr.SetX(dx / deno);
+	v_Incr.SetY(dy / deno);
+	v = *v1;
+	i = 0;
+
+	for (int i = 0; i < deno; i++)
+	{
+		v = v + v_Incr;
+		v.Draw(gRenderer);
+	}
+
+}
+
+
+void DLHelpler(int x, int y, int dx, int dy, int modX, int modY)
+{
+	int i = 0;
+	int p  = (2 * dy) - dx;
+	if (dx > dy)
+	{
+		while (i < dx)
+		{
+			SDL_RenderDrawPoint(gRenderer, x, y);
+			x += modX;
+			if (p < 0)
+			{
+				p = p + (2 * dy);
+			}
+			else
+			{
+				y += modY;
+				p = p + (2 * (dy - dx));
+			}
+			i++;
+		}
+	}
+	else
+	{
+		while (i < dy)
+		{
+			SDL_RenderDrawPoint(gRenderer, x, y);
+			y += modY;
+			if (p < 0)
+			{
+				p = p + (2 * dx);
+			}
+			else
+			{
+				x += modX;
+				p = p + (2 * (dx - dy));
+			}
+			i++;
+		}
+	}
+}
+
+void DrawLine3(Vector2 & const v1, Vector2 & const v2) 
+{
+	int x, y, p, dx, dy, i;
+	i = 0;
+	dx = v2.GetScreenX() - v1.GetScreenX();
+	dy = v2.GetScreenY() - v1.GetScreenY();
+
+	x = v1.GetScreenX();
+	y = v1.GetScreenY();
+	if (dx < 0)
+	{
+		if (dy < 0)
+		{
+			DLHelpler(x, y, abs(dx), abs(dy), -1, -1);
+		}
+		else
+		{
+			DLHelpler(x, y, abs(dx), abs(dy), -1, 1);
+		}
+	}
+	else
+	{
+		if (dy < 0)
+		{
+			DLHelpler(x, y, abs(dx), abs(dy), 1, -1);
+		}
+		else
+		{
+			DLHelpler(x, y, abs(dx), abs(dy), 1, 1);
+		}
+	}
+}
+
 int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
@@ -316,6 +456,11 @@ int main(int argc, char* args[])
 
 			//Aqui puse todo lo del Draw para mejor orden
 			DrawPlain();
+
+			for (int i = 1; i < v.size(); i++)
+			{
+				DrawLine3(v[i-1], v[i]);
+			}
 
 			for (auto object : v)
 			{

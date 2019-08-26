@@ -15,3 +15,5 @@ Traslacion::Traslacion(float x, float y)
 	mat[2][0] = x;
 	mat[2][1] = y;
 }
+
+//knothe

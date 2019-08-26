@@ -35,6 +35,6 @@ protected:
 	unsigned rows;
 	unsigned cols;
 
-
 };
 
+  
