@@ -391,14 +391,96 @@ void DrawLine3(Vector2 & const v1, Vector2 & const v2)
 	}
 }
 
+void DrawCircle(Vector2& const v1, Vector2& const v2) {
+	int x, y, p;
+	int r;
+	r = sqrt(((v1.GetScreenX() - v2.GetScreenX()) * (v1.GetScreenX() - v2.GetScreenX())) + ((v1.GetScreenY() - v2.GetScreenY()) * (v1.GetScreenY() - v2.GetScreenY())));
+	x = 0;
+	y = r;
+	p = 1 - r;
+	do {
+		if (p <= 0)
+		{
+			x = x + 1;
+			p = p + (2 * x) + 3;
+		}
+		else if (p > 0)
+		{
+			x = x + 1;
+			y = y - 1;
+			p = (2 * x) - (2 * y) + 5 + p;
+		}
+
+		SDL_RenderDrawPoint(gRenderer, x + v1.GetScreenX(), y + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, x + v1.GetScreenX(), -y + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, -x + v1.GetScreenX(), y + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, -x + v1.GetScreenX(), -y + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, y + v1.GetScreenX(), x + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, y + v1.GetScreenX(), -x + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, -y + v1.GetScreenX(), x + v1.GetScreenY());
+		SDL_RenderDrawPoint(gRenderer, -y + v1.GetScreenX(), -x + v1.GetScreenY());
+	} while (x <= y);
+	
+}
+
+float Power(float num, int pow) 
+{
+	if (pow == 0) {
+		return 1;
+	}
+	else {
+		return num * Power(num, pow - 1);
+	}
+}
+
+int Factorial(int n) 
+{
+	if (n <= 1) {
+		return 1;
+	}
+	else {
+		return n * Factorial(n - 1);
+	}
+}
+
+void BezierCurve(Vector2&const v1, Vector2& const v2, Vector2& const v3, Vector2& const v4)
+{
+	Vector2 v_draw;
+
+	for (float t = 0; t <= 1; t += .0001) {
+		v_draw = (v1 * Power(1 - t, 3)) + (v2 * 3 * t * Power(1 - t, 2)) + (v3 * 3 * Power(t, 2) * (1 - t)) + (v4 * Power(t, 3));
+		v_draw.Draw(gRenderer);
+	}
+}
+
+void BezierCurve(std::vector<Vector2> v) {
+	int n = v.size() - 1;
+	Vector2 v_draw;
+
+	for (float t = 0; t <= 1; t += .0001) {
+		v_draw = Vector2(0, 0);
+		for (int k = 0; k <= n; k++) {
+			int b = Factorial(n) / (Factorial(k) * (Factorial(n - k)));
+			v_draw = v_draw + (v[k] * b * Power(t, k) * Power(1 - t, n - k));
+		}
+		v_draw.Draw(gRenderer);
+	}
+}
+
 int main(int argc, char* args[])
 {
 	SetScreen(argc, args);
-
+	std::cout << Power(6, 3) << std::endl;
 	
 	std::stack<Matriz> i;
-	Matriz change;
-	std::vector<Vector2> v;
+	
+	std::vector<Vector2> line_v;
+	std::vector<Vector2> circle_v;
+	
+	Vector2 v1(0, 0);
+	Vector2 v2(1, 2);
+	Vector2 v3(3, 3);
+	Vector2 v4(4, 0);
 	//v.resize(0);
 
 	std::cout << "Presione enter para ingresar su matriz de transformacion " << std::endl;
@@ -428,26 +510,45 @@ int main(int argc, char* args[])
 				}
 				else if (e.type == SDL_MOUSEBUTTONDOWN)
 				{
-					std::cout << "Recibimos : " << e.button.x << ", " << e.button.y << std::endl;
-					std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
-					v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
+					if (e.button.button == SDL_BUTTON_RIGHT) {
+						std::cout << "Recibimos : " << e.button.x << ", " << e.button.y << std::endl;
+						std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
+						circle_v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
+					}
+					if (e.button.button == SDL_BUTTON_LEFT) {
+						std::cout << "Recibimos : " << e.button.x << ", " << e.button.y << std::endl;
+						std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
+						line_v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
+					}
+					
 				}
 				else if (e.type == SDL_KEYDOWN)
 				{
 					std::cout << e.key.keysym.sym << std::endl;
-					if (e.key.keysym.sym == 13 && v.size() != 0)
+					if (e.key.keysym.sym == 13 && line_v.size() != 0)
 					{
+						Matriz change;
 						change = AskMatriz();
-						SetVectores(&v, change);
+						SetVectores(&line_v, change);
+						SetVectores(&circle_v, change);
 						i.push(change.Inversa());
+					}
+					
+					if (e.key.keysym.sym == 120 && line_v.size() > 0)
+					{
+						line_v.pop_back();
 					}
 
 					if (e.key.keysym.sym == 122 && i.size() > 0)
 					{
-						SetVectores(&v, i.top());
+						SetVectores(&line_v, i.top());
 						i.pop();
 					}
-					
+
+					if (e.key.keysym.sym == 99 && circle_v.size() > 0)
+					{
+						circle_v.pop_back();
+					}
 				}
 			}
 
@@ -456,13 +557,32 @@ int main(int argc, char* args[])
 
 			//Aqui puse todo lo del Draw para mejor orden
 			DrawPlain();
-
-			for (int i = 1; i < v.size(); i++)
+			/*BezierCurve(v1, v2, v3, v4);
+			v1.Draw(gRenderer);
+			v2.Draw(gRenderer);
+			v3.Draw(gRenderer);
+			v4.Draw(gRenderer);*/
+			for (int i = 1; i < line_v.size(); i++)
 			{
-				DrawLine3(v[i-1], v[i]);
+				DrawLine3(line_v[i-1], line_v[i]);
+				
 			}
 
-			for (auto object : v)
+			if (line_v.size() > 1) {
+				BezierCurve(line_v);
+			}
+
+			for (int i = 1; i < circle_v.size(); i++)
+			{
+				DrawCircle(circle_v[0], circle_v[i]);
+			}
+
+			for (auto object : line_v)
+			{
+				object.Draw(gRenderer);
+			}
+
+			for (auto object : circle_v)
 			{
 				object.Draw(gRenderer);
 			}
