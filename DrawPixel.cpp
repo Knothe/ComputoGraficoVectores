@@ -315,7 +315,6 @@ void DrawLine2(Vector2* const v1, Vector2* const v2)
 
 }
 
-
 void DLHelpler(int x, int y, int dx, int dy, int modX, int modY)
 {
 	int i = 0;
@@ -360,8 +359,7 @@ void DLHelpler(int x, int y, int dx, int dy, int modX, int modY)
 
 void DrawLine3(Vector2 & const v1, Vector2 & const v2) 
 {
-	int x, y, p, dx, dy, i;
-	i = 0;
+	int x, y, dx, dy;
 	dx = v2.GetScreenX() - v1.GetScreenX();
 	dy = v2.GetScreenY() - v1.GetScreenY();
 
@@ -453,6 +451,14 @@ void BezierCurve(Vector2&const v1, Vector2& const v2, Vector2& const v3, Vector2
 	}
 }
 
+void BezierCurve(Vector2& const v1, Vector2& const v2, Vector2& const v3, Vector2& const v4, Vector2& const v5, Vector2& const v6, Vector2& const v7) {
+	Vector2 v_draw;
+	for (float t = 0; t <= 1; t += .0001) {
+		v_draw = (v1 * Power(1 - t, 6)) + (v2* 6 * t * Power(1 - t, 5)) + (v3 * 15 * Power(t, 2) * Power(1 - t, 4)) + (v4 * 20 * Power(t, 3) * Power(1 - t, 3)) + (v5 * 15 * Power(t, 4) * Power(1 - t, 2)) + (v6 * 6 * Power(t, 5) * (1 - t)) + (v7 * Power(t, 6));
+		v_draw.Draw(gRenderer);
+	}
+}
+
 void BezierCurve(std::vector<Vector2> v) {
 	int n = v.size() - 1;
 	Vector2 v_draw;
@@ -472,16 +478,15 @@ int main(int argc, char* args[])
 	SetScreen(argc, args);
 	std::cout << Power(6, 3) << std::endl;
 	
-	std::stack<Matriz> i;
+	std::stack<Matriz> line_stack;
+	std::stack<Matriz> circle_stack;
+	std::stack<Matriz> curve_stack;
 	
+
 	std::vector<Vector2> line_v;
+	std::vector<Vector2> curve_v;
 	std::vector<Vector2> circle_v;
 	
-	Vector2 v1(0, 0);
-	Vector2 v2(1, 2);
-	Vector2 v3(3, 3);
-	Vector2 v4(4, 0);
-	//v.resize(0);
 
 	std::cout << "Presione enter para ingresar su matriz de transformacion " << std::endl;
 	//Start up SDL and create window
@@ -491,26 +496,28 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		//Main loop flag
+		std::cout << "--- Indicaciones ---" << std::endl;
+		std::cout << "Las lineas se ingresan con boton izquierdo y se borran con z" << std::endl;
+		std::cout << "Las curvas se ingresan con boton derecho y se borran con q"<< std::endl;
+		std::cout << "Los ojos se ingresan con el boton de en medio y se borran con a" << std::endl;
+		std::cout << "Todo se puede modificar ingresando enter" << std::endl;
+		std::cout << "Cuando ingrese enter, podrá ingresar los cambios y en el MISMO ORDEN se ejecutaran" << std::endl;
+		std::cout << "Presionar finalizar cuando se terminen los cambios, y ahi se podra elegir a quien modificar" << std::endl;
+		std::cout << "=======================================" << std::endl;
+
 		bool quit = false;
-
-		//Event handler
 		SDL_Event e;
-
-		//While application is running
 		while (!quit)
 		{
-			//Handle events on queue
 			while (SDL_PollEvent(&e) != 0)
 			{
-				//User requests quit
 				if (e.type == SDL_QUIT)
 				{
 					quit = true;
 				}
 				else if (e.type == SDL_MOUSEBUTTONDOWN)
 				{
-					if (e.button.button == SDL_BUTTON_RIGHT) {
+					if (e.button.button == SDL_BUTTON_MIDDLE) {
 						std::cout << "Recibimos : " << e.button.x << ", " << e.button.y << std::endl;
 						std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
 						circle_v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
@@ -520,18 +527,43 @@ int main(int argc, char* args[])
 						std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
 						line_v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
 					}
+					if (e.button.button == SDL_BUTTON_RIGHT) {
+						std::cout << "Recibimos : " << e.button.x << ", " << e.button.y << std::endl;
+						std::cout << "Type id: " << typeid(e.button.x).name() << std::endl;
+						curve_v.push_back(Vector2(e.button.x, e.button.y, SCREEN_HEIGHT, SCREEN_WIDTH, tam));
+					}
 					
 				}
 				else if (e.type == SDL_KEYDOWN)
 				{
 					std::cout << e.key.keysym.sym << std::endl;
-					if (e.key.keysym.sym == 13 && line_v.size() != 0)
+					if (e.key.keysym.sym == 13)
 					{
 						Matriz change;
+						int v = 0;
 						change = AskMatriz();
-						SetVectores(&line_v, change);
-						SetVectores(&circle_v, change);
-						i.push(change.Inversa());
+						std::cout << "A que matriz quiere aplicar el cambio?" << std::endl;
+						std::cout << "1) Linea" << std::endl;
+						std::cout << "2) Curva" << std::endl;
+						std::cout << "3) Circulo" << std::endl;
+						std::cin >> v;
+						switch (v) {
+						case 1:
+							SetVectores(&line_v, change);
+							line_stack.push(change.Inversa());
+							break;
+						case 2:
+							SetVectores(&curve_v, change);
+							curve_stack.push(change.Inversa());
+							break;
+						case 3:
+							SetVectores(&circle_v, change);
+							circle_stack.push(change.Inversa());
+							break;
+						default:
+							std::cout << "No ingresaste una opcion correcta, no se cambiara nada" << std::endl;
+						}
+						
 					}
 					
 					if (e.key.keysym.sym == 120 && line_v.size() > 0)
@@ -539,15 +571,33 @@ int main(int argc, char* args[])
 						line_v.pop_back();
 					}
 
-					if (e.key.keysym.sym == 122 && i.size() > 0)
+					if (e.key.keysym.sym == 122 && line_stack.size() > 0)
 					{
-						SetVectores(&line_v, i.top());
-						i.pop();
+						SetVectores(&line_v, line_stack.top());
+						line_stack.pop();
 					}
+
+					if (e.key.keysym.sym == 113 && curve_stack.size() > 0)
+					{
+						SetVectores(&curve_v, curve_stack.top());
+						curve_stack.pop();
+					}
+
+					if (e.key.keysym.sym == 97 && circle_stack.size() > 0)
+					{
+						SetVectores(&circle_v, circle_stack.top());
+						circle_stack.pop();
+					}
+
+
 
 					if (e.key.keysym.sym == 99 && circle_v.size() > 0)
 					{
 						circle_v.pop_back();
+					}	
+					
+					if (e.key.keysym.sym == 118 && curve_v.size() > 0) {
+						curve_v.pop_back();
 					}
 				}
 			}
@@ -555,21 +605,14 @@ int main(int argc, char* args[])
 			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(gRenderer);
 
-			//Aqui puse todo lo del Draw para mejor orden
 			DrawPlain();
-			/*BezierCurve(v1, v2, v3, v4);
-			v1.Draw(gRenderer);
-			v2.Draw(gRenderer);
-			v3.Draw(gRenderer);
-			v4.Draw(gRenderer);*/
+
+			BezierCurve(curve_v);
+
 			for (int i = 1; i < line_v.size(); i++)
 			{
 				DrawLine3(line_v[i-1], line_v[i]);
 				
-			}
-
-			if (line_v.size() > 1) {
-				BezierCurve(line_v);
 			}
 
 			for (int i = 1; i < circle_v.size(); i++)
@@ -578,6 +621,11 @@ int main(int argc, char* args[])
 			}
 
 			for (auto object : line_v)
+			{
+				object.Draw(gRenderer);
+			}
+
+			for (auto object : curve_v)
 			{
 				object.Draw(gRenderer);
 			}
@@ -592,7 +640,6 @@ int main(int argc, char* args[])
 
 	}
 
-	//Free resources and close SDL
 	close();
 
 	return 0;
